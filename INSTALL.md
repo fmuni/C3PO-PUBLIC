@@ -20,7 +20,7 @@ You may just need to intall the hdf5 library with the source code by typing:
 
 That is the only additional library required aside from openfoam6.
 
-Source your openFoam bashrc to ensure you have the OpenFOAM variables set up properly.
+Source your openFOAM bashrc to ensure you have the OpenFOAM variables set up properly.
 
 Then just enter the etc folder:
 
