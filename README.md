@@ -1,5 +1,5 @@
-# C3PO-PUBLIC
-Public Version of C3PO Toolbox
+# C3PO
+The C3PO Toolbox
 
 ![logo](cpppo_logo.png)
 ======
