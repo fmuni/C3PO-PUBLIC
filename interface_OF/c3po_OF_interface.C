@@ -252,7 +252,7 @@ void c3poOFInterface::createGradients()
 #ifdef version40
      shearStress_->ref()=0;
 #else
-     shearStress_->internalField()=0;
+     shearStress_->ref()=0;
 #endif
      
     

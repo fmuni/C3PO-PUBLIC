@@ -1,0 +1,10 @@
+export C3PO_SRC_DIR=$HOME/C3PO
+export C3PO_QT5_LIB=/usr/lib/x86_64-linux-gnu/
+export C3PO_QT5_INC=/usr/include/x86_64-linux-gnu/qt5
+export C3PO_HDF5_DIR=/usr/include/hdf5/serial/
+export C3PO_HDF5_LIB=/usr/lib/x86_64-linux-gnu/
+export C3PO_HDF5_INC=/usr/include/hdf5/serial/
+export USEHDF5=true
+
+export C3PO_ADD_LIBS_DIR=$C3PO_SRC_DIR/etc
+export C3PO_ADD_LIBS_NAME=additionalLibs_H5_6.0

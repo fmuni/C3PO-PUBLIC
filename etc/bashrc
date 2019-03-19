@@ -31,6 +31,7 @@
 #export C3PO_ADD_LIBS_NAME = additionalLibs_3.0.x
 #================================================#
 #------------------------------------------------------------------------------
+. bashrc_ubuntu_18.04
 #- additional envs
 export C3PO_EXAMPLE_DIR=$C3PO_SRC_DIR/examples
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$C3PO_QT5_LIB:$C3PO_HDF5_LIB
@@ -70,6 +71,8 @@ elif [[ $WM_PROJECT_VERSION == 2.4.* ]]; then
     export CFDEM_WM_PROJECT_VERSION=24
 elif [[ $WM_PROJECT_VERSION == "3.2" && $WM_FORK == "extend" ]]; then
     export CFDEM_WM_PROJECT_VERSION=132
+elif [[ $WM_PROJECT_VERSION == 6 ]]; then
+    export CFDEM_WM_PROJECT_VERSION=60
 else
     clear
     echo "Variable WM_PROJECT_VERSION is not set. please first source OpenFOAM's bashrc file!"

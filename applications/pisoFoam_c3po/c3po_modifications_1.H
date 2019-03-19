@@ -51,27 +51,33 @@ Description
                                          
 // * * * * * * * * * * * * CODE MODIFICATIONS * * * * * * * * * * * * * * *
 
+// This initialises MPI to properly run CPPPO with the WORLD communicator
+    int flag;
+    MPI_Initialized(&flag);
+    if (!flag)
+    {
+        int argc = 0;
+        char **argv = NULL;
+        MPI_Init(&argc,&argv);
+    }
+    int proc_name;
+    MPI_Comm_rank(MPI_COMM_WORLD,&proc_name);
 
 // These lines are used to create the C3PO object and run a check of the mesh.In case 
 // CPPPO finds incompabilities with the input script an error will be thrown.
 
-
-
- Info << "\n Creating C3PO object...\n";
+    Info << "\n Creating C3PO object...\n";
     
 // The c3poOFInterface object requires a fvMesh& and a valid MPI communicator as arguments for 
 // its constructor
   
     C3PO_NS::c3poOFInterface *myC3PO= new C3PO_NS::c3poOFInterface(mesh,MPI_COMM_WORLD);
-   
-    
-    
+       
 // checkMyMesh() tells CPPPO to read the mesh and collect data. In case of multiple calls, 
 // the mesh information will be updated. It has to be called at least one time before doing 
 // any operation.       
      
-      myC3PO->checkMyMesh();
-
+    myC3PO->checkMyMesh();
 
 // Particles can be registered in CPPPO at any point of the solver C file. Normally, if there is no change 
 // in particle properties (position, velocity, ecc.) they can be registered just one time before the main loop.

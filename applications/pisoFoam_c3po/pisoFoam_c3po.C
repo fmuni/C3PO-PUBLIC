@@ -34,179 +34,45 @@ Description
 //Include CPPPO
 #include "c3po_OF_interface.H"
 
-#include "OFversion.H"
-#if defined(version30)
-    #include "turbulentTransportModel.H"
-    #include "pisoControl.H"
-#else
-    #include "turbulenceModel.H"
-#endif
-
-
 #include "fvCFD.H"
 #include "singlePhaseTransportModel.H"
-#include "turbulenceModel.H"
-
-#if defined(versionv1606plus) || defined(version40)
-    #include "fvOptions.H"
-#else
-    #include "fvIOoptionList.H"
-#endif
-
-#include "cellSet.H"
-#include "mpi.h"
-
-
-
+#include "turbulentTransportModel.H"
+#include "pisoControl.H"
+#include "fvOptions.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 int main(int argc, char *argv[])
 {
-    #include "setRootCase.H"
+    #include "postProcess.H"
 
+    #include "setRootCaseLists.H"
     #include "createTime.H"
     #include "createMesh.H"
-
-    #if defined(version30)
-      pisoControl piso(mesh);
-      #include "createTimeControls.H"
-    #endif
-
+    #include "createControl.H"
     #include "createFields.H"
     #include "initContinuityErrs.H"
-    #include "createFvOptions.H"
+
+    turbulence->validate();
+
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-     int flag;
-    MPI_Initialized(&flag);
-    if (!flag)
-    {
-        int argc = 0;
-        char **argv = NULL;
-        MPI_Init(&argc,&argv);
-    }
-    int proc_name;
-    MPI_Comm_rank(MPI_COMM_WORLD,&proc_name);
-
-
-
-
-
- # include "c3po_modifications_1.H"
-
-
+    // Initialise C3PO library
+    #include "c3po_modifications_1.H"
 
     Info<< "\nStarting time loop\n" << endl;
-
     while (runTime.loop())
     {
-        Info<< "Time = " << runTime.timeName() << nl << endl;
+        
+        #include "solvePISO.H"
 
-        #if defined(version30)
-              #include "readTimeControls.H"
-              #include "CourantNo.H"
-              #include "setDeltaT.H"
-          #else
-              #include "readPISOControls.H"
-              #include "CourantNo.H"
-          #endif
-
-
-
-        // Pressure-velocity PISO corrector
+        // Call C3PO every time OF writes to disk
+        if(runTime.write())
         {
-            // Momentum predictor
-
-            fvVectorMatrix UEqn
-            (
-                fvm::ddt(U)
-              + fvm::div(phi, U)
-              + turbulence->divDevReff(U)
-              - fvOptions(U)
-            );
-
-            UEqn.relax();
-
-            #if defined(version30)
-                   if (piso.momentumPredictor())
-             #else
-                   if (momentumPredictor)
-             #endif
-            {
-                solve(UEqn == -fvc::grad(p));
-            }
-
-            // --- PISO loop
-
-            #if defined(version30)
-                  while (piso.correct())
-              #else
-                  int nCorrSoph = nCorr + 5 * pow((1-particleCloud.dataExchangeM().timeStepFraction()),1);
-                  for (int corr=0; corr<nCorrSoph; corr++)
-              #endif
-            {
-                volScalarField rAU(1.0/UEqn.A());
-
-                volVectorField HbyA("HbyA", U);
-                HbyA = rAU*UEqn.H();
-                surfaceScalarField phiHbyA
-                (
-                    "phiHbyA",
-                    (fvc::interpolate(HbyA) & mesh.Sf())
-                  + fvc::interpolate(rAU)*fvc::ddtCorr(U, phi)
-                );
-
-                adjustPhi(phiHbyA, U, p);
-
-                // Non-orthogonal pressure corrector loop
-                #if defined(version30)
-                  while (piso.correctNonOrthogonal())
-                #else
-                  for (int nonOrth=0; nonOrth<=nNonOrthCorr; nonOrth++)
-                #endif
-                {
-                    // Pressure corrector
-
-                    fvScalarMatrix pEqn
-                    (
-                        fvm::laplacian(rAU, p) == fvc::div(phiHbyA)
-                    );
-
-                    pEqn.setReference(pRefCell, pRefValue);
-
-                    #if defined(version30)
-                     pEqn.solve(mesh.solver(p.select(piso.finalInnerIter())));
-
-                     #else
-                     if( corr == nCorr-1 && nonOrth == nNonOrthCorr )
-                       pEqn.solve(mesh.solver("pFinal"));
-                     else
-                      pEqn.solve();
-
-
-                     #endif
-
-                }
-
-                #include "continuityErrs.H"
-
-                U = HbyA - rAU*fvc::grad(p);
-                U.correctBoundaryConditions();
-            }
+           # include "c3po_modifications_2.H"
+           runTime.write();
         }
-
-        turbulence->correct();
-
-//In this example CPPPO is called when OF writes data to disk
-
-     if(runTime.write())
-     {
-     # include "c3po_modifications_2.H"
-
-        runTime.write();
-     }
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
             << "  ClockTime = " << runTime.elapsedClockTime() << " s"
             << nl << endl;
