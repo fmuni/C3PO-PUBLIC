@@ -4,7 +4,40 @@
 Linux Environment
 -----------------------
 Be sure to have all the required libraries installed before compiling CPPPO.
-You will need, at least, Qt-5 and an MPI library in order to compile CPPPO
+You will need, at least, Qt-5 and an MPI library in order to compile CPPPO.
+
+__If you have Ubuntu 18.04 and OpenFOAM-6 just follow the instructions in the next section and ignore the  rest!__
+
+Ubuntu 18.04 and OpenFOAM-6
+-----------------------
+If you want to use CPPPO in Ubuntu 18.04 with OpenFOAM-6, the installation process is quite simple.
+
+First, clone this repository __in your home folder__.
+
+You may just need to intall the hdf5 library with the source code by typing:
+
+`sudo apt install libhdf5-dev`
+
+That is the only additional library required aside from openfoam6.
+
+Source your openFoam bashrc to ensure you have the OpenFOAM variables set up properly.
+
+Then just enter the etc folder:
+
+`cd $HOME/C3PO/etc`
+
+and source the C3PO bashrc:
+
+`. bashrc`
+
+Finally, run the compileMe script:
+
+`cd $HOME/C3PO/etc`
+
+`./compileMe`
+
+
+Enjoy.
 
 ### Qt (required)
 Be sure you have the Qt library installed:
