@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #----------------------------------*-sh-*--------------------------------------
 # CPPPO
 # Stefan Radl, Federico Municchi
@@ -31,7 +31,16 @@
 #export C3PO_ADD_LIBS_NAME = additionalLibs_3.0.x
 #================================================#
 #------------------------------------------------------------------------------
-. bashrc_ubuntu_18.04
+
+#- Source Ubuntu bashrc
+
+# Full path of the current script
+THIS=`readlink -f "${BASH_SOURCE[0]}" 2>/dev/null||echo $0`
+# The directory where current script resides
+DIR=`dirname "${THIS}"`
+
+. "$DIR/bashrc_ubuntu_18.04"
+
 #- additional envs
 export C3PO_EXAMPLE_DIR=$C3PO_SRC_DIR/examples
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$C3PO_QT5_LIB:$C3PO_HDF5_LIB
@@ -73,6 +82,8 @@ elif [[ $WM_PROJECT_VERSION == "3.2" && $WM_FORK == "extend" ]]; then
     export CFDEM_WM_PROJECT_VERSION=132
 elif [[ $WM_PROJECT_VERSION == 6 ]]; then
     export CFDEM_WM_PROJECT_VERSION=60
+elif [[ $WM_PROJECT_VERSION == 7 ]]; then
+    export CFDEM_WM_PROJECT_VERSION=70
 else
     clear
     echo "Variable WM_PROJECT_VERSION is not set. please first source OpenFOAM's bashrc file!"
