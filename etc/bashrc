@@ -66,26 +66,27 @@ alias c3poClean='bash $C3PO_SRC_DIR/cleanMe'
 #- shortcut to compile C3PO
 alias c3poComp='bash $C3PO_SRC_DIR/compileMe'
 
+export CFDEM_WM_PROJECT_VERSION=60
 #- set correct variables in case OpenFOAM is used
-source $C3PO_SRC_DIR/etc/setOpenFOAMvariables.sh
+# source $C3PO_SRC_DIR/etc/setOpenFOAMvariables.sh
 
 # detect OF version
-if [[ $WM_PROJECT_VERSION == 5.* ]]; then
-    export CFDEM_WM_PROJECT_VERSION=50
-elif [[ $WM_PROJECT_VERSION == 4.* ]]; then
-    export CFDEM_WM_PROJECT_VERSION=40
-elif [[ $WM_PROJECT_VERSION == 3.0.* ]]; then
-    export CFDEM_WM_PROJECT_VERSION=30
-elif [[ $WM_PROJECT_VERSION == 2.4.* ]]; then
-    export CFDEM_WM_PROJECT_VERSION=24
-elif [[ $WM_PROJECT_VERSION == "3.2" && $WM_FORK == "extend" ]]; then
-    export CFDEM_WM_PROJECT_VERSION=132
-elif [[ $WM_PROJECT_VERSION == 6 ]]; then
-    export CFDEM_WM_PROJECT_VERSION=60
-elif [[ $WM_PROJECT_VERSION == 7 ]]; then
-    export CFDEM_WM_PROJECT_VERSION=70
-else
-    clear
-    echo "Variable WM_PROJECT_VERSION is not set. please first source OpenFOAM's bashrc file!"
-    sleep 1.5
-fi
+# if [[ $WM_PROJECT_VERSION == 5.* ]]; then
+#     export CFDEM_WM_PROJECT_VERSION=50
+# elif [[ $WM_PROJECT_VERSION == 4.* ]]; then
+#     export CFDEM_WM_PROJECT_VERSION=40
+# elif [[ $WM_PROJECT_VERSION == 3.0.* ]]; then
+#     export CFDEM_WM_PROJECT_VERSION=30
+# elif [[ $WM_PROJECT_VERSION == 2.4.* ]]; then
+#     export CFDEM_WM_PROJECT_VERSION=24
+# elif [[ $WM_PROJECT_VERSION == "3.2" && $WM_FORK == "extend" ]]; then
+#     export CFDEM_WM_PROJECT_VERSION=132
+# elif [[ $WM_PROJECT_VERSION == 6 ]]; then
+#     export CFDEM_WM_PROJECT_VERSION=60
+# elif [[ $WM_PROJECT_VERSION == "7" ]]; then
+#     export CFDEM_WM_PROJECT_VERSION=60
+# else
+#     clear
+#     echo "Variable WM_PROJECT_VERSION is not set. please first source OpenFOAM's bashrc file!"
+#     sleep 1.5
+# fi
