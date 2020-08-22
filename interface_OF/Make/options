@@ -10,8 +10,9 @@ EXE_INC = \
     -I$(LIB_SRC)/mesh/blockMesh/lnInclude \
     -I$(MPI_ARCH_PATH)/include \
     -I$(C3PO_QT5_INC)/ \
+    -Wno-old-style-cast
 
-    
+
 
 LIB_LIBS = \
     -L$(C3PO_QT5_INC) \
@@ -24,6 +25,3 @@ LIB_LIBS = \
     -lc3po \
     -L$(MPI_ARCH_PATH)/lib64 \
     -lmpi_cxx \
-    
-	
-
