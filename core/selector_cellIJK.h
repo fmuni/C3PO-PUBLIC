@@ -1,11 +1,11 @@
 /*-----------------------------------------------------------------------------*\
-                  ___   _____   _____   _____     ___   
-                 / ___\/\  __`\/\  __`\/\  __`\  / __`\ 
+                  ___   _____   _____   _____     ___
+                 / ___\/\  __`\/\  __`\/\  __`\  / __`\
                 /\ \__/\ \ \_\ \ \ \_\ \ \ \_\ \/\ \_\ \
                 \ \____\\ \  __/\ \  __/\ \  __/\ \____/
-                 \/____/ \ \ \/  \ \ \/  \ \ \/  \/___/ 
-                          \ \_\   \ \_\   \ \_\         
-                           \/_/    \/_/    \/_/         
+                 \/____/ \ \ \/  \ \ \/  \ \ \/  \/___/
+                          \ \_\   \ \_\   \ \_\
+                           \/_/    \/_/    \/_/
 
          A Compilation for Fluid-Particle Data Post PrOcessing
 
@@ -34,7 +34,7 @@ License
 /*-----------------------------------------------------------------------------------
 Description
   This class contains the functions needed to select one or more cells (position to cellId)
-  using an OpenFOAM fully structured mesh. All cell volumes have to be equal! 
+  using an OpenFOAM fully structured mesh. All cell volumes have to be equal!
 -----------------------------------------------------------------------------------*/
 
 #ifdef SELECTOR_CLASS
@@ -54,57 +54,107 @@ namespace C3PO_NS
 {
 
 
-class SelectorCellIJK : public SelectorBase
-{
+    class SelectorCellIJK : public SelectorBase
+    {
     public:
 
-      SelectorCellIJK(c3po *ptr,const char *_name);
-      ~SelectorCellIJK();
+        SelectorCellIJK(c3po *ptr,const char *_name);
+        ~SelectorCellIJK();
 
 
-    void begin_of_step();
-    void middle_of_step() {};
-    void end_of_step() {};
+        void begin_of_step();
+        void middle_of_step() {};
+        void end_of_step() {};
 
-      
-    int findNearestCell(double x, double y, double z);
 
-      
+        int findNearestCell(double x, double y, double z);
+
+
     private:
-    
-   
-    double tolerance_;
 
-    int* max_;
-    int* min_;
-    double* cellCoord_;
-    
-    int* IJKlist_;
-    
-    
-    
-    bool checkPosition(double posA, double max, double min );
-    bool checkPositionPeriodic(double posA, double max, double min );
-    
-    bool checkPositionSphere(double i_ijk, double j_ijk, double k_ijk, double r_, int cell_, double * delta_);
-    bool checkPositionPeriodicSphere(double i_ijk, double j_ijk, double k_ijk, double r_, int cell_, double * delta_);
-    
-    bool checkPositionSphereDummy(double i_ijk, double j_ijk, double k_ijk, double r_, int cell_, double * delta_) {return true;};
-   
-    bool (SelectorCellIJK::*checkR)(double,double,double,double,int,double*);
-    
-    bool periodic_[3];
-         
-    void RunSelector();
-    
-    void fillArrays();
-    void boundaryCorrections();
-    
-    int ijk2CellIDOF(int i_add_correct, int j_add_correct, int k_add_correct);
-    void CellID2ijk(int center_Cell_ID, int* result); 
-    
-   
-};
+
+        double tolerance_;
+
+        int* max_;
+        int* min_;
+        double* cellCoord_;
+
+        int* IJKlist_;
+
+
+
+        bool checkPosition
+        (
+            double posA,
+            double max,
+            double min
+        );
+
+        bool checkPositionPeriodic
+        (
+            double posA,
+            double max,
+            double min
+        );
+
+        bool checkPositionSphere
+        (
+            double i_ijk,
+            double j_ijk,
+            double k_ijk,
+            double r_,
+            int cell_,
+            double * delta_
+        );
+
+        bool checkPositionPeriodicSphere
+        (
+            double i_ijk,
+            double j_ijk,
+            double k_ijk,
+            double r_,
+            int cell_,
+            double * delta_
+        );
+
+        bool checkPositionSphereDummy
+        (
+            double i_ijk,
+            double j_ijk,
+            double k_ijk,
+            double r_,
+            int cell_,
+            double * delta_
+        ) {return true;};
+
+        bool (SelectorCellIJK::*checkR)
+        (
+            double,
+            double,
+            double,
+            double,
+            int,
+            double*
+        );
+
+        bool periodic_[3];
+
+        void RunSelector();
+
+        void fillArrays();
+        void boundaryCorrections();
+
+        int ijk2CellIDOF
+        (
+            int i_add_correct,
+            int j_add_correct,
+            int k_add_correct
+        );
+
+        void CellID2ijk(int center_Cell_ID, int* result); 
+
+
+    };
 
 } //end c3po_NS
 

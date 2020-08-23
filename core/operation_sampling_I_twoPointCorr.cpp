@@ -1,11 +1,11 @@
 /*-----------------------------------------------------------------------------*\
-                  ___   _____   _____   _____     ___   
-                 / ___\/\  __`\/\  __`\/\  __`\  / __`\ 
+                  ___   _____   _____   _____     ___
+                 / ___\/\  __`\/\  __`\/\  __`\  / __`\
                 /\ \__/\ \ \_\ \ \ \_\ \ \ \_\ \/\ \_\ \
                 \ \____\\ \  __/\ \  __/\ \  __/\ \____/
-                 \/____/ \ \ \/  \ \ \/  \ \ \/  \/___/ 
-                          \ \_\   \ \_\   \ \_\         
-                           \/_/    \/_/    \/_/         
+                 \/____/ \ \ \/  \ \ \/  \ \ \/  \/___/
+                          \ \_\   \ \_\   \ \_\
+                           \/_/    \/_/    \/_/
 
          A Compilation for Fluid-Particle Data Post PrOcessing
 
@@ -50,8 +50,8 @@ License
 using namespace C3PO_NS;
 using namespace std;
 
-TwoPointCorr::TwoPointCorr(c3po *ptr,const char *name) 
-: 
+TwoPointCorr::TwoPointCorr(c3po *ptr,const char *name)
+:
 OperationSampling(ptr,name),
 component_(-1)
 {
@@ -65,61 +65,102 @@ TwoPointCorr::~TwoPointCorr()
 
 void TwoPointCorr::begin_of_step()
 {
-  (this->*run)();
+    (this->*run)();
 }
 
 /* ----------------------------------------------------------------------*/
 
 void TwoPointCorr::process_input(QJsonObject jsonObj)
 {
- createSampleVectors(2,0,0);
-        
- //Error Checks
- if(jsonObj["phaseFractionField"].isNull())
-  error().throw_error_one("operation_sampling.cpp",
-                                     0,
-                                    "ERROR: You must specify the 'phaseFractionField' field in the Json file when using TwoPointsCorrelation \n");
- if(sampleCount_<1)
-  error().throw_error_one(FLERR,"Your sampleCount is zero or not specified. \n");
+    createSampleVectors(2,0,0);
 
- if(sampleDelta_<1e-16)
-  error().throw_error_one(FLERR,"Your sampleDelta is too small or not specified. \n");
-            
- if(!jsonObj["direction"].isNull())
-  component_ = jsonObj["direction"].toInt();
- else
-  error().throw_error_one("operation_sampling.cpp",
-                                0,
-                                "ERROR:You should specify a sampling direction for the two points correlation!");
-         
- if(component_>2 || component_<0) 
-  error().throw_error_one("operation_sampling.cpp",
-                                0,
-                                "ERROR:Invalid direction! Valid directions are:\n 0 (= x )\n 1 (= y )\n 2 (= z ) \n");
-       
-        
-    
- QString Qalpha=jsonObj["phaseFractionField"].toString();
- std::string alpha=Qalpha.toUtf8().constData();
- alphaName_.assign(alpha);
-       
- if((input().getSFnumber(alphaName_))==-1) dataStorage().addFieldToConvert(alphaName_);
-            
- QString fN=jsonObj["fieldToSample"].toString(); 
- VFtoSample_.push_back(fN.toUtf8().constData());
-       
- if(!jsonObj["filteredField"].isNull())
- {
-  QString aField=jsonObj["filteredField"].toString();
-  std::string aField_=aField.toUtf8().constData();
-  averagedField_.assign(aField_);  
-  
-  if((input().getVFnumber(averagedField_))==-1) dataStorage().addFieldToConvert(averagedField_);
-          
-  run=&TwoPointCorr::twoPointsCorrFluct;      
- }
- else
-  run=&TwoPointCorr::twoPointsCorr;  
+    //Error Checks
+    if(jsonObj["phaseFractionField"].isNull())
+    {
+        error().throw_error_one
+        (
+            "operation_sampling.cpp",
+            0,
+            "ERROR: You must specify the 'phaseFractionField'"
+            " field in the Json file when using TwoPointsCorrelation \n"
+        );
+    }
+
+    if(sampleCount_<1)
+    {
+        error().throw_error_one
+        (
+            FLERR,
+            "Your sampleCount is zero or not specified. \n"
+        );
+    }
+
+    if(sampleDelta_<1e-16)
+    {
+        error().throw_error_one
+        (
+            FLERR,
+            "Your sampleDelta is too small or not specified. \n"
+        );
+    }
+
+    if(!jsonObj["direction"].isNull())
+    {
+        component_ = jsonObj["direction"].toInt();
+    }
+    else
+    {
+        error().throw_error_one
+        (
+            "operation_sampling.cpp",
+            0,
+            "ERROR:You should specify a sampling direction for the"
+            " two points correlation!"
+        );
+    }
+
+    if(component_>2 || component_<0)
+    {
+
+        error().throw_error_one
+        (
+            "operation_sampling.cpp",
+            0,
+            "ERROR:Invalid direction! Valid directions"
+            " are:\n 0 (= x )\n 1 (= y )\n 2 (= z ) \n"
+        );
+    }
+
+
+    QString Qalpha=jsonObj["phaseFractionField"].toString();
+    std::string alpha=Qalpha.toUtf8().constData();
+    alphaName_.assign(alpha);
+
+    if((input().getSFnumber(alphaName_))==-1)
+    {
+        dataStorage().addFieldToConvert(alphaName_);
+    }
+
+    QString fN=jsonObj["fieldToSample"].toString();
+    VFtoSample_.push_back(fN.toUtf8().constData());
+
+    if(!jsonObj["filteredField"].isNull())
+    {
+        QString aField=jsonObj["filteredField"].toString();
+        std::string aField_=aField.toUtf8().constData();
+        averagedField_.assign(aField_);
+
+        if((input().getVFnumber(averagedField_))==-1)
+        {
+            dataStorage().addFieldToConvert(averagedField_);
+        }
+
+        run=&TwoPointCorr::twoPointsCorrFluct;
+    }
+    else
+    {
+        run=&TwoPointCorr::twoPointsCorr;
+    }
 
 
 }
@@ -128,147 +169,209 @@ void TwoPointCorr::process_input(QJsonObject jsonObj)
 
 void TwoPointCorr::twoPointsCorr()
 {
-  int id=dataStorage().fVFid(VFtoSample_[0]);
-  if(id==-1) error().throw_error_one("OperationSampling::TwoPointsCorr()",0,"ERROR: Vector field not registered!!"); 
-  
-  int totcells_;
-  int celli;
-  int probeID;
-  
-  double samplePos_[3];
-  
-  double v1[3];
-  double v2[3];
-  double alpha1, alpha2;
-  double sampleValue;
-  
-  int cellID;
+    int id=dataStorage().fVFid(VFtoSample_[0]);
+    if(id==-1)
+    {
+        error().throw_error_one
+        (
+            "OperationSampling::TwoPointsCorr()",
+            0,
+            "ERROR: Vector field not registered!!"
+        );
+    }
 
-  double x1_;
-  
-  if(lagrangian_) dataStorage().setProbes(probesName_);
-  
-  alpha_=dataStorage().fSFid(alphaName_);
-  if(alpha_==-1) error().throw_error_one("OperationSampling::TwoPointsCorr()",0,"ERROR: phase fraction field not registered!!"); 
- 
-  if(lagrangian_)
-   totcells_=dataStorage().numOfParticles();
-  else
-   totcells_=mesh().NofCells();
+    int totcells_;
+    int celli;
+    int probeID;
 
-  int j=component_;
-    
-  for(int rID=0; rID<sampleCount_; rID++)
-  {
-      x1_= double(rID)*sampleDelta_;
-     
-      
-      
-      for (int cell=0;cell<totcells_;cell++)
-      { 
-       
-       
-       if(lagrangian_)
-       {
-       //calculate CellID
-       
-       samplePos_[0] = dataStorage().getParticle(cell)->getpos()[0];
-       samplePos_[1] = dataStorage().getParticle(cell)->getpos()[1];
-       samplePos_[2] = dataStorage().getParticle(cell)->getpos()[2];
-       
-       cellID = selectorContainer().selectCell(   samplePos_[0],
-                                                  samplePos_[1],
-                                                  samplePos_[2]
-                                              );
-       }
-       else
-       {
-        cellID=cell; 
-      
-        samplePos_[0] = (mesh().CellCentre(cell)[0]);
-        samplePos_[1] = (mesh().CellCentre(cell)[2]);
-        samplePos_[2] = (mesh().CellCentre(cell)[1]);    
-        
-        if(dataStorage().SF(alpha_,cellID) > (1-1e-05) ) //no particle in there
-         continue;
-         
-       }
-               
-       if(cellID>=mesh().NofCells()) error().throw_error_one("OperationSampling::TwoPointsCorr()",0,"ERROR: Problems with cellID!!"); 
-      
-       //Location for sampling
-         
-       samplePos_[j] += x1_;
+    double samplePos_[3];
 
-       probeID= selectorContainer().selectCell(   samplePos_[0],
-                                                  samplePos_[1],
-                                                  samplePos_[2]
-                                              );
-       
-       
-       if(probeID>=mesh().NofCells()) 
-         error().throw_error_one("OperationSampling::TwoPointsCorr()",0,"ERROR: Problems with probeID!!"); 
-       
-       if(probeID == -1) continue;      //TODO implement parallel TpointCorr!!!
-     
-    
-       if(lagrangian_)
-        alpha1 = *(dataStorage().getParticle(cell)->filteredScalar(alpha_));
-       else
-        alpha1 =dataStorage().SF(alpha_,cellID);
-       
-        alpha2 =dataStorage().SF(alpha_,probeID); 
-    
-    
-        //pull out vector from storage
-       
-       for (int i=0;i<3;i++)
-       {
-        if(lagrangian_)
-         v1[i]= dataStorage().getParticle(cell)->filteredVector(id)[i];
-        else
-         v1[i]= dataStorage().VF(id,i,cellID);
-        
-        v2[i]= dataStorage().VF(id,i,probeID);
-       }
-    
-     
-       // 1 - alphaAlphaUsUs 
-       sampleValue = alpha1 * alpha2 * (   v1[0] * v2[0] 
-                                         + v1[1] * v2[1] 
-                                         + v1[2] * v2[2]
-                                       );
-       if( alpha2 < (1-1e-05) )
-       {
-          insertSample(sampleValue, x1_); //pushes the sample into the container
-          if(input().verbose())
-          {
-            std::cout << "\n"
-                 << "alpha1: "<< alpha1 << "   alpha2: " << alpha2 << "    " 
-                 << " Us1:( " <<  v1[0] << ","<< v1[1] << ","<< v1[2] << ")" << "    "       
-                 << " Us2:( " <<  v2[0] << ","<< v2[1] << ","<< v2[2] << ")" << "    "
-                 << " sample: " <<  sampleValue << std::endl;
-          }
-       
-       
-     
-        // 0 - alphaAlpha
-        sampleValue =  alpha1 * alpha2;
-       
-        insertSample(sampleValue, x1_,1); //pushes the sample into the container
-        if(input().verbose())
+    double v1[3];
+    double v2[3];
+    double alpha1, alpha2;
+    double sampleValue;
+
+    int cellID;
+
+    double x1_;
+
+    if(lagrangian_)
+    {
+        dataStorage().setProbes(probesName_);
+    }
+
+    alpha_=dataStorage().fSFid(alphaName_);
+    if(alpha_==-1)
+    {
+         error().throw_error_one
+         (
+             "OperationSampling::TwoPointsCorr()",
+             0,
+             "ERROR: phase fraction field not registered!!"
+         );
+     }
+
+    if(lagrangian_)
+    {
+        totcells_=dataStorage().numOfParticles();
+    }
+    else
+    {
+        totcells_=mesh().NofCells();
+    }
+
+    int j=component_;
+
+    for(int rID=0; rID<sampleCount_; rID++)
+    {
+        x1_= double(rID)*sampleDelta_;
+
+        for (int cell=0;cell<totcells_;cell++)
         {
-            std::cout << " at cell: " << celli << std::endl
-                 << " alpha1: " <<  alpha1 << "  "
-                 << " alpha2: " <<  alpha2 << "  "
-                 << " sample: " <<  sampleValue << std::endl;
-        }      
-        
-       }
-      }      
-                   
-    
-  }  //end loop over all samples
+
+            if(lagrangian_)
+            {
+                //calculate CellID
+
+                samplePos_[0] = dataStorage().getParticle(cell)->getpos()[0];
+                samplePos_[1] = dataStorage().getParticle(cell)->getpos()[1];
+                samplePos_[2] = dataStorage().getParticle(cell)->getpos()[2];
+
+                cellID = selectorContainer().selectCell
+                (
+                    samplePos_[0],
+                    samplePos_[1],
+                    samplePos_[2]
+                );
+            }
+            else
+            {
+                cellID=cell;
+
+                samplePos_[0] = (mesh().CellCentre(cell)[0]);
+                samplePos_[1] = (mesh().CellCentre(cell)[2]);
+                samplePos_[2] = (mesh().CellCentre(cell)[1]);
+
+                if(dataStorage().SF(alpha_,cellID) > (1-1e-05) ) //no particle in there
+                {
+                    continue;
+                }
+
+            }
+
+            if( cellID >= mesh().NofCells())
+            {
+                 error().throw_error_one
+                 (
+                     "OperationSampling::TwoPointsCorr()",
+                     0,
+                     "ERROR: Problems with cellID!!"
+                 );
+             }
+
+            //Location for sampling
+
+            samplePos_[j] += x1_;
+
+            probeID = selectorContainer().selectCell
+            (
+                samplePos_[0],
+                samplePos_[1],
+                samplePos_[2]
+            );
+
+
+            if(probeID>=mesh().NofCells())
+            {
+                error().throw_error_one
+                (
+                    "OperationSampling::TwoPointsCorr()",
+                    0,
+                    "ERROR: Problems with probeID!!"
+                );
+            }
+
+            if(probeID == -1)
+            {
+                continue;
+            }
+
+
+            if(lagrangian_)
+            {
+                alpha1 =
+                    *(dataStorage().getParticle(cell)->filteredScalar(alpha_));
+            }
+            else
+            {
+                alpha1 =dataStorage().SF(alpha_,cellID);
+            }
+
+            alpha2 =dataStorage().SF(alpha_,probeID);
+
+
+            //pull out vector from storage
+
+            for (int i=0;i<3;i++)
+            {
+                if(lagrangian_)
+                {
+                    v1[i] =
+                        dataStorage().getParticle(cell)->filteredVector(id)[i];
+                }
+                else
+                {
+                    v1[i] =
+                        dataStorage().VF(id,i,cellID);
+                }
+
+                v2[i]= dataStorage().VF(id,i,probeID);
+            }
+
+
+            // 1 - alphaAlphaUsUs
+            sampleValue =
+                alpha1
+              * alpha2
+              * (
+                  v1[0] * v2[0]
+                  + v1[1] * v2[1]
+                  + v1[2] * v2[2]
+                );
+
+            if( alpha2 < (1-1e-05) )
+            {
+                insertSample(sampleValue, x1_); //pushes the sample into the container
+                if(input().verbose())
+                {
+                    std::cout << "\n"
+                    << "alpha1: "<< alpha1 << "   alpha2: " << alpha2 << "    "
+                    << " Us1:( " <<  v1[0] << ","<< v1[1]
+                    << ","<< v1[2] << ")" << "    "
+                    << " Us2:( " <<  v2[0] << ","
+                    << v2[1] << ","<< v2[2] << ")" << "    "
+                    << " sample: " <<  sampleValue << std::endl;
+                }
+
+
+
+                // 0 - alphaAlpha
+                sampleValue =  alpha1 * alpha2;
+
+                insertSample(sampleValue, x1_,1); //pushes the sample into the container
+                if(input().verbose())
+                {
+                    std::cout << " at cell: " << celli << std::endl
+                    << " alpha1: " <<  alpha1 << "  "
+                    << " alpha2: " <<  alpha2 << "  "
+                    << " sample: " <<  sampleValue << std::endl;
+                }
+
+            }
+        }
+
+
+    }  //end loop over all samples
 
 
 }
@@ -277,153 +380,222 @@ void TwoPointCorr::twoPointsCorr()
 
 void TwoPointCorr::twoPointsCorrFluct()
 {
-  int id=dataStorage().fVFid(VFtoSample_[0]);
-  if(id==-1) error().throw_error_one("OperationSampling::TwoPointsCorr()",0,"ERROR: Vector field not registered!!"); 
-  
-  int aId;
-  aId=dataStorage().fVFid(averagedField_);
-  if(aId==-1) error().throw_error_one("OperationSampling::TwoPointsCorr()",0,"ERROR: averaged Vector field not registered!!"); 
-  
+    int id=dataStorage().fVFid(VFtoSample_[0]);
+    if(id==-1)
+    {
+        error().throw_error_one
+        (
+            "OperationSampling::TwoPointsCorr()",
+            0,
+            "ERROR: Vector field not registered!!"
+        );
+    }
 
-  int totcells_;
-  double samplePos_[3];
-  int celli;
- 
-  int probeID;
-  double v1[3];
-  double v2[3];
-  double alpha1, alpha2;
-  double sampleValue;
-  
- 
-  int cellID;
+    int aId;
+    aId=dataStorage().fVFid(averagedField_);
+    if(aId==-1)
+    {
+         error().throw_error_one
+         (
+             "OperationSampling::TwoPointsCorr()",
+             0,
+             "ERROR: averaged Vector field not registered!!"
+         );
+     }
 
-  double x1_;
-  
-  if(lagrangian_) dataStorage().setProbes(probesName_);
-  
-  alpha_=dataStorage().fSFid(alphaName_);
-  if(alpha_==-1) error().throw_error_one("OperationSampling::TwoPointsCorr()",0,"ERROR: phase fraction field not registered!!"); 
- 
-  if(lagrangian_)
-   totcells_=dataStorage().numOfParticles();
-  else
-   totcells_=mesh().NofCells();
-   
-  
 
-  int j=component_;
-    
-  for(int rID=0; rID<sampleCount_; rID++)
-  {
-      x1_= double(rID)*sampleDelta_;
-     
-      
-      for (int cell=0;cell<totcells_;cell++)
-      { 
-       
-        
-       if(lagrangian_)
-       {
-       //calculate CellID
-       
-       samplePos_[0] = dataStorage().getParticle(cell)->getpos()[0];
-       samplePos_[1] = dataStorage().getParticle(cell)->getpos()[1];
-       samplePos_[2] = dataStorage().getParticle(cell)->getpos()[2];
-       
-       cellID = selectorContainer().selectCell(   samplePos_[0],
-                                                  samplePos_[1],
-                                                  samplePos_[2]
-                                              );
-       }
-       else
-       {
-        cellID=cell; 
-      
-        samplePos_[0] = (mesh().CellCentre(cell)[0]);
-        samplePos_[1] = (mesh().CellCentre(cell)[1]);
-        samplePos_[2] = (mesh().CellCentre(cell)[2]);    
-        
-        if(dataStorage().SF(alpha_,cellID) > (1-1e-05) ) //no particle in there
-         continue;
-         
-       }
-               
-       if(cellID>=mesh().NofCells()) error().throw_error_one("OperationSampling::TwoPointsCorr()",0,"ERROR: Problems with cellID!!"); 
-      
-       //Location for sampling
-         
-       samplePos_[j] += x1_;
+    int totcells_;
+    double samplePos_[3];
+    int celli;
 
-       probeID= selectorContainer().selectCell(   samplePos_[0],
-                                                  samplePos_[1],
-                                                  samplePos_[2]
-                                              );
-       
-       
-       if(probeID>=mesh().NofCells()) 
-         error().throw_error_one("OperationSampling::TwoPointsCorr()",0,"ERROR: Problems with probeID!!"); 
-       
-       if(probeID == -1) continue;      //TODO implement parallel TpointCorr!!!
-     
-     if(lagrangian_)
-       alpha1 = *(dataStorage().getParticle(cell)->filteredScalar(alpha_));
-     else
-       alpha1 =dataStorage().SF(alpha_,cellID);
-       
-       alpha2 =dataStorage().SF(alpha_,probeID); 
-    
-    
-        //pull out vector from storage
-       
-       for (int i=0;i<3;i++)
-       {
-        if(lagrangian_)
-         v1[i]= dataStorage().getParticle(cell)->filteredVector(id)[i] - dataStorage().getParticle(cell)->filteredVector(aId)[i];
-        else
-         v1[i]= dataStorage().VF(id,i,cellID) - dataStorage().VF(aId,i,cellID);
-        
-        v2[i]= dataStorage().VF(id,i,probeID) - dataStorage().VF(aId,i,probeID);
-       }
-       //  cout << "\n" << alpha1 << "\n";
-       //  cout << "\n" << alpha2 << "\n";
-     
-       // 1 - alphaAlphaUsUs 
-       sampleValue = alpha1 * alpha2 * (   v1[0] * v2[0] 
-                                         + v1[1] * v2[1] 
-                                         + v1[2] * v2[2]
-                                       );
-       if( alpha2 < (1-1e-05) )
-       {
-          insertSample(sampleValue, x1_); //pushes the sample into the container
-          if(input().verbose())
-          {
-            cout << "\n"
-                 << "alpha1: "<< alpha1 << "   alpha2: " << alpha2 << "    " 
-                 << " Us1:( " <<  v1[0] << ","<< v1[1] << ","<< v1[2] << ")" << "    "       
-                 << " Us2:( " <<  v2[0] << ","<< v2[1] << ","<< v2[2] << ")" << "    "
-                 << " sample: " <<  sampleValue << endl;
-          }
-       
-       
-     
-        // 0 - alphaAlpha
-        sampleValue =  alpha1 * alpha2;
-       
-        insertSample(sampleValue, x1_,1); //pushes the sample into the container
-        if(input().verbose())
+    int probeID;
+    double v1[3];
+    double v2[3];
+    double alpha1, alpha2;
+    double sampleValue;
+
+
+    int cellID;
+
+    double x1_;
+
+    if(lagrangian_)
+    {
+        dataStorage().setProbes(probesName_);
+    }
+
+    alpha_=dataStorage().fSFid(alphaName_);
+    if(alpha_==-1)
+    {
+        error().throw_error_one
+        (
+            "OperationSampling::TwoPointsCorr()",
+            0,
+            "ERROR: phase fraction field not registered!!"
+        );
+    }
+
+    if(lagrangian_)
+    {
+        totcells_=dataStorage().numOfParticles();
+    }
+    else
+    {
+        totcells_=mesh().NofCells();
+    }
+
+
+
+    int j=component_;
+
+    for(int rID=0; rID<sampleCount_; rID++)
+    {
+        x1_= double(rID)*sampleDelta_;
+
+        for (int cell=0;cell<totcells_;cell++)
         {
-            cout << " at cell: " << celli << endl
-                 << " alpha1: " <<  alpha1 << "  "
-                 << " alpha2: " <<  alpha2 << "  "
-                 << " sample: " <<  sampleValue << endl;
-        }      
-        
-       }
-      }      
-                   
-    
-  }  //end loop over all samples
+            if(lagrangian_)
+            {
+                //calculate CellID
+                samplePos_[0] = dataStorage().getParticle(cell)->getpos()[0];
+                samplePos_[1] = dataStorage().getParticle(cell)->getpos()[1];
+                samplePos_[2] = dataStorage().getParticle(cell)->getpos()[2];
+
+                cellID = selectorContainer().selectCell
+                (
+                    samplePos_[0],
+                    samplePos_[1],
+                    samplePos_[2]
+                );
+            }
+            else
+            {
+                cellID=cell;
+
+                samplePos_[0] = (mesh().CellCentre(cell)[0]);
+                samplePos_[1] = (mesh().CellCentre(cell)[1]);
+                samplePos_[2] = (mesh().CellCentre(cell)[2]);
+
+                if(dataStorage().SF(alpha_,cellID) > (1-1e-05) ) //no particle in there
+                {
+                    continue;
+                }
+
+            }
+
+            if(cellID>=mesh().NofCells())
+            {
+                error().throw_error_one
+                (
+                    "OperationSampling::TwoPointsCorr()",
+                    0,
+                    "ERROR: Problems with cellID!!"
+                );
+            }
+
+            //Location for sampling
+
+            samplePos_[j] += x1_;
+
+            probeID= selectorContainer().selectCell
+            (
+                samplePos_[0],
+                samplePos_[1],
+                samplePos_[2]
+            );
+
+
+            if(probeID>=mesh().NofCells())
+            {
+                error().throw_error_one
+                (
+                    "OperationSampling::TwoPointsCorr()",
+                    0,
+                    "ERROR: Problems with probeID!!"
+                );
+            }
+
+            if(probeID == -1)
+            {
+                continue;      //TODO implement parallel TpointCorr!!!
+            }
+
+            if(lagrangian_)
+            {
+                alpha1 =
+                    *(dataStorage().getParticle(cell)->filteredScalar(alpha_));
+            }
+            else
+            {
+                alpha1 =dataStorage().SF(alpha_,cellID);
+            }
+
+            alpha2 =dataStorage().SF(alpha_,probeID);
+
+
+            //pull out vector from storage
+
+            for (int i=0;i<3;i++)
+            {
+                if(lagrangian_)
+                {
+                    v1[i] =
+                        dataStorage().getParticle(cell)->filteredVector(id)[i]
+                      - dataStorage().getParticle(cell)->filteredVector(aId)[i];
+                }
+                else
+                {
+                    v1[i] =
+                        dataStorage().VF(id,i,cellID)
+                        - dataStorage().VF(aId,i,cellID);
+                }
+
+                v2[i]= dataStorage().VF(id,i,probeID) - dataStorage().VF(aId,i,probeID);
+            }
+            //  cout << "\n" << alpha1 << "\n";
+            //  cout << "\n" << alpha2 << "\n";
+
+            // 1 - alphaAlphaUsUs
+            sampleValue =
+                alpha1 * alpha2 *
+                (
+                    v1[0] * v2[0]
+                  + v1[1] * v2[1]
+                  + v1[2] * v2[2]
+                );
+
+            if( alpha2 < (1-1e-05) )
+            {
+                insertSample(sampleValue, x1_); //pushes the sample into the container
+                if(input().verbose())
+                {
+                    cout << "\n"
+                    << "alpha1: "<< alpha1 << "   alpha2: " << alpha2 << "    "
+                    << " Us1:( " <<  v1[0] << ","<< v1[1] << ","<< v1[2]
+                    << ")" << "    "
+                    << " Us2:( " <<  v2[0] << ","<< v2[1] << ","<< v2[2]
+                    << ")" << "    "
+                    << " sample: " <<  sampleValue << endl;
+                }
+
+
+
+                // 0 - alphaAlpha
+                sampleValue =  alpha1 * alpha2;
+
+                insertSample(sampleValue, x1_,1); //pushes the sample into the container
+                if(input().verbose())
+                {
+                    cout << " at cell: " << celli << endl
+                    << " alpha1: " <<  alpha1 << "  "
+                    << " alpha2: " <<  alpha2 << "  "
+                    << " sample: " <<  sampleValue << endl;
+                }
+
+            }
+        }
+
+
+    }  //end loop over all samples
 
 }
-

@@ -1,11 +1,11 @@
 /*-----------------------------------------------------------------------------*\
-                  ___   _____   _____   _____     ___   
-                 / ___\/\  __`\/\  __`\/\  __`\  / __`\ 
+                  ___   _____   _____   _____     ___
+                 / ___\/\  __`\/\  __`\/\  __`\  / __`\
                 /\ \__/\ \ \_\ \ \ \_\ \ \ \_\ \/\ \_\ \
                 \ \____\\ \  __/\ \  __/\ \  __/\ \____/
-                 \/____/ \ \ \/  \ \ \/  \ \ \/  \/___/ 
-                          \ \_\   \ \_\   \ \_\         
-                           \/_/    \/_/    \/_/         
+                 \/____/ \ \ \/  \ \ \/  \ \ \/  \/___/
+                          \ \_\   \ \_\   \ \_\
+                           \/_/    \/_/    \/_/
 
          A Compilation for Fluid-Particle Data Post PrOcessing
 
@@ -52,52 +52,68 @@ namespace C3PO_NS
 {
 
 
-class SelectorCellRegion : public SelectorBase
-{
+    class SelectorCellRegion : public SelectorBase
+    {
     public:
 
-      SelectorCellRegion(c3po *ptr,const char *_name);
-      ~SelectorCellRegion();
+        SelectorCellRegion(c3po *ptr,const char *_name);
+        ~SelectorCellRegion();
 
-//      void init(int narg, char const* const* arg) {};
+        //      void init(int narg, char const* const* arg) {};
 
-      void begin_of_step();
-      void middle_of_step() ;
-      void end_of_step() {};
+        void begin_of_step();
+        void middle_of_step() ;
+        void end_of_step() {};
 
     private:
 
-      //Variable
-      double                threshold_;                 //for detecting the region
-      bool                  identifyBelowThreshold_;    //for detecting the region
-      std::string           nameOfFieldForSelection_;   
-      int                   fieldForSelection_;         //pointer to field
-      bool                  updateRegionsEachStep_;     //if true, every time step the regions will be updated
-      bool                  updated_;
-      int*                  AA;                        //bubble vector. It tells if a bubble is present.
-      int                   NofBubbles_;
- 
-      //Functionality
-      void (SelectorCellRegion::*updateRegions)();
-      
-      void IJKRegionSelector();
-      
-      int ijk2CellIDOF(int i_add_correct, int j_add_correct, int k_add_correct);
-      void CellID2ijk(int center_Cell_ID, int* result); 
-      
-      bool (SelectorCellRegion::*check)(int);
-      
-      bool checkIfBelow(int cell);
-      bool checkIfAbove(int cell);
-      
-      std::vector<int>  bubble_index_store;
-      std::vector<int> bubble_index_surface;
-      int               bubble_index_eval;
-      
-      void checkIndexStore(int id);
-      void createRegion();
-    
-};
+        //Variable
+
+        //for detecting the region
+        double                threshold_;
+
+         //for detecting the region
+        bool                  identifyBelowThreshold_;
+        std::string           nameOfFieldForSelection_;
+
+        //pointer to field
+        int                   fieldForSelection_;
+
+        //if true, every time step the regions will be updated
+        bool                  updateRegionsEachStep_;
+        bool                  updated_;
+
+        //bubble vector. It tells if a bubble is present.
+        int*                  AA;
+        int                   NofBubbles_;
+
+        //Functionality
+        void (SelectorCellRegion::*updateRegions)();
+
+        void IJKRegionSelector();
+
+        int ijk2CellIDOF
+        (
+            int i_add_correct,
+            int j_add_correct,
+            int k_add_correct
+        );
+
+        void CellID2ijk(int center_Cell_ID, int* result);
+
+        bool (SelectorCellRegion::*check)(int);
+
+        bool checkIfBelow(int cell);
+        bool checkIfAbove(int cell);
+
+        std::vector<int>  bubble_index_store;
+        std::vector<int> bubble_index_surface;
+        int               bubble_index_eval;
+
+        void checkIndexStore(int id);
+        void createRegion();
+
+    };
 
 } //end c3po_NS
 

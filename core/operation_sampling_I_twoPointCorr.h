@@ -1,11 +1,11 @@
 /*-----------------------------------------------------------------------------*\
-                  ___   _____   _____   _____     ___   
-                 / ___\/\  __`\/\  __`\/\  __`\  / __`\ 
+                  ___   _____   _____   _____     ___
+                 / ___\/\  __`\/\  __`\/\  __`\  / __`\
                 /\ \__/\ \ \_\ \ \ \_\ \ \ \_\ \/\ \_\ \
                 \ \____\\ \  __/\ \  __/\ \  __/\ \____/
-                 \/____/ \ \ \/  \ \ \/  \ \ \/  \/___/ 
-                          \ \_\   \ \_\   \ \_\         
-                           \/_/    \/_/    \/_/         
+                 \/____/ \ \ \/  \ \ \/  \ \ \/  \/___/
+                          \ \_\   \ \_\   \ \_\
+                           \/_/    \/_/    \/_/
 
          A Compilation for Fluid-Particle Data Post PrOcessing
 
@@ -45,33 +45,33 @@ OperationStyle(samplingTwoPointsCorr,TwoPointCorr)
 
 namespace C3PO_NS
 {
- 
- class TwoPointCorr : public OperationSampling
- {
-  
-  public:
-  
-  virtual void process_input(QJsonObject jsonObj);
- 
-  void begin_of_step();
-        
-  
-  TwoPointCorr(c3po *ptr,const char *_name);
-  ~TwoPointCorr();
-   
-  private:
-  
-  mutable int                  alpha_;
-  mutable int              component_;
-  mutable std::string      alphaName_;
-  mutable std::string  averagedField_;
-  
-  void twoPointsCorr();
-  void twoPointsCorrFluct();
-  
-  void (TwoPointCorr::*run)();
-     
- };
+
+    class TwoPointCorr : public OperationSampling
+    {
+
+    public:
+
+        virtual void process_input(QJsonObject jsonObj);
+
+        void begin_of_step();
+
+
+        TwoPointCorr(c3po *ptr,const char *_name);
+        ~TwoPointCorr();
+
+    private:
+
+        mutable int                  alpha_;
+        mutable int              component_;
+        mutable std::string      alphaName_;
+        mutable std::string  averagedField_;
+
+        void twoPointsCorr();
+        void twoPointsCorrFluct();
+
+        void (TwoPointCorr::*run)();
+
+    };
 }
 #endif
 #endif

@@ -1,11 +1,11 @@
 /*-----------------------------------------------------------------------------*\
-                  ___   _____   _____   _____     ___   
-                 / ___\/\  __`\/\  __`\/\  __`\  / __`\ 
+                  ___   _____   _____   _____     ___
+                 / ___\/\  __`\/\  __`\/\  __`\  / __`\
                 /\ \__/\ \ \_\ \ \ \_\ \ \ \_\ \/\ \_\ \
                 \ \____\\ \  __/\ \  __/\ \  __/\ \____/
-                 \/____/ \ \ \/  \ \ \/  \ \ \/  \/___/ 
-                          \ \_\   \ \_\   \ \_\         
-                           \/_/    \/_/    \/_/         
+                 \/____/ \ \ \/  \ \ \/  \ \ \/  \/___/
+                          \ \_\   \ \_\   \ \_\
+                           \/_/    \/_/    \/_/
 
          A Compilation for Fluid-Particle Data Post PrOcessing
 
@@ -34,7 +34,7 @@ License
 /*-----------------------------------------------------------------------------------
 Description
   This class contains the functions needed to select one or more cells (position to cellId)
-  using an OpenFOAM general unstructured mesh. Only a linear finding algorithm is implemented. 
+  using an OpenFOAM general unstructured mesh. Only a linear finding algorithm is implemented.
 -----------------------------------------------------------------------------------*/
 
 #ifdef SELECTOR_CLASS
@@ -54,51 +54,85 @@ namespace C3PO_NS
 {
 
 
-class SelectorCellUnstruct : public SelectorBase
-{
+    class SelectorCellUnstruct : public SelectorBase
+    {
     public:
 
-      SelectorCellUnstruct(c3po *ptr,const char *_name);
-      ~SelectorCellUnstruct();
+        SelectorCellUnstruct(c3po *ptr,const char *_name);
+        ~SelectorCellUnstruct();
 
-      void begin_of_step();
-      void middle_of_step() {};
-      void end_of_step() {};
-      
-      int findNearestCell(double x, double y, double z);
+        void begin_of_step();
+        void middle_of_step() {};
+        void end_of_step() {};
 
-      
+        int findNearestCell(double x, double y, double z);
+
+
     private:
-    
-    double tolerance_;
-    
-    
 
-    double* max_;
-    double* min_;
-    bool periodic_[3];
+        double tolerance_;
 
-    bool (SelectorCellUnstruct::*checkX)(double,double,double);
-    bool (SelectorCellUnstruct::*checkY)(double,double,double);
-    bool (SelectorCellUnstruct::*checkZ)(double,double,double);
-    
-    bool (SelectorCellUnstruct::*checkR)(double,double,double,double,int,double*);
-    
-    bool checkPosition(double posA, double max, double min );
-    bool checkPositionPeriodic(double posA, double max, double min );
-    
-    bool checkPositionSphere(double i, double j, double k, double r_, int index_, double * delta_);
-    bool checkPositionPeriodicSphere(double i, double j, double k, double r_, int index_, double * delta_);
-    bool checkPositionSphereDummy(double i, double j, double k, double r_, int cell_, double * delta_) {return true;};
-        
-    void RunSelector();
-    void fillArrays();
-    void boundaryCorrections();
-    
-    
-    
 
-};
+
+        double* max_;
+        double* min_;
+        bool periodic_[3];
+
+        bool (SelectorCellUnstruct::*checkX)(double,double,double);
+        bool (SelectorCellUnstruct::*checkY)(double,double,double);
+        bool (SelectorCellUnstruct::*checkZ)(double,double,double);
+
+        bool (SelectorCellUnstruct::*checkR)
+        (
+            double,
+            double,
+            double,
+            double,
+            int,
+            double*
+        );
+
+        bool checkPosition(double posA, double max, double min );
+        bool checkPositionPeriodic(double posA, double max, double min );
+
+        bool checkPositionSphere
+        (
+            double i,
+            double j,
+            double k,
+            double r_,
+            int index_,
+            double * delta_
+        );
+
+        bool checkPositionPeriodicSphere
+        (
+            double i,
+            double j,
+            double k,
+            double r_,
+            int index_,
+            double * delta_
+        );
+
+        bool checkPositionSphereDummy
+        (
+            double i,
+            double j,
+            double k,
+            double r_,
+            int cell_,
+            double * delta_
+        ) {return true;};
+
+        void RunSelector();
+        void fillArrays();
+        void boundaryCorrections();
+
+
+
+
+    };
 
 } //end c3po_NS
 

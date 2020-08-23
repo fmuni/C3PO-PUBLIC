@@ -1,11 +1,11 @@
 /*-----------------------------------------------------------------------------*\
-                  ___   _____   _____   _____     ___   
-                 / ___\/\  __`\/\  __`\/\  __`\  / __`\ 
+                  ___   _____   _____   _____     ___
+                 / ___\/\  __`\/\  __`\/\  __`\  / __`\
                 /\ \__/\ \ \_\ \ \ \_\ \ \ \_\ \/\ \_\ \
                 \ \____\\ \  __/\ \  __/\ \  __/\ \____/
-                 \/____/ \ \ \/  \ \ \/  \ \ \/  \/___/ 
-                          \ \_\   \ \_\   \ \_\         
-                           \/_/    \/_/    \/_/         
+                 \/____/ \ \ \/  \ \ \/  \ \ \/  \/___/
+                          \ \_\   \ \_\   \ \_\
+                           \/_/    \/_/    \/_/
 
          A Compilation for Fluid-Particle Data Post PrOcessing
 
@@ -49,66 +49,85 @@ Description
 
 namespace C3PO_NS
 {
- class probeStorage : public c3poBaseAccessible
- {
-  private:
-  
-  std::string                           groupName_; //identifies the probe group
-  
-  std::vector<std::string>              filterNames_; //name of the filters that use this group
-  
-  mutable std::vector<Particle*>        particles_;  //collection of particles
-  
-  mutable int MaxNofPar_;
-        
-  mutable std::vector<double>        parPos_; //Holds particle positions for manually registered particles;
- 
-  mutable int*                       nParticlesProc_;
-  
-  mutable bool                       readParticlesFromJson_;
-  
-  public:
- 
- 
-  probeStorage(std::string groupName, std::vector<std::string> filterNames, bool readParticlesFromJson, c3po *ptr);
-  ~probeStorage();
- 
-  void addParticle(double m, double* pos, double* vel, std::vector< double* >* force, std::vector<double>* scalars = NULL, double* torque = NULL);
-  
-  void gatherParticleData() const;
-      
-  void readParticles() const;
-      
-  void removeGhostParticles() const;
-  
-      
-  
-  Particle* getParticle(int i) {return particles_[i];};
-  
-  int numOfParticles() {return particles_.size();};
-      
-  int MaxNumOfParticles() const { return MaxNofPar_;};
-            
-  int getNofParticlesProc(int p) const {return  nParticlesProc_[p];};
+    class probeStorage : public c3poBaseAccessible
+    {
+    private:
 
-  
-  void writeParticles(std::string fileName_);
-  void writeParticleFields(std::string fileName_);
-  
-  void deleteParticles();
-  
-  void setParPos(std::vector<double> parPos) const {parPos_=parPos;};
-  
-  std::string name() {return groupName_;};
-  
-  bool runProbes(std::string filterName);
-  
-  void addVector();
-  void addScalar();
-  
-  void cleanProbeFields();
-   
- };
+        //identifies the probe group
+        std::string                           groupName_;
+
+        //name of the filters that use this group
+        std::vector<std::string>              filterNames_;
+
+        //collection of particles
+        mutable std::vector<Particle*>        particles_;
+
+        mutable int MaxNofPar_;
+
+        //Holds particle positions for manually registered particles
+        mutable std::vector<double>        parPos_;
+
+        mutable int*                       nParticlesProc_;
+
+        mutable bool                       readParticlesFromJson_;
+
+    public:
+
+
+        probeStorage
+        (
+            std::string groupName,
+            std::vector<std::string> filterNames,
+            bool readParticlesFromJson,
+            c3po *ptr
+        );
+
+        ~probeStorage();
+
+        void addParticle
+        (
+            double m,
+            double* pos,
+            double* vel,
+            std::vector< double* >* force,
+            std::vector<double>* scalars = NULL,
+            double* torque = NULL
+        );
+
+        void gatherParticleData() const;
+
+        void readParticles() const;
+
+        void removeGhostParticles() const;
+
+
+
+        Particle* getParticle(int i) {return particles_[i];};
+
+        int numOfParticles() {return particles_.size();};
+
+        int MaxNumOfParticles() const { return MaxNofPar_;};
+
+        int getNofParticlesProc(int p) const {return  nParticlesProc_[p];};
+
+
+        void writeParticles(std::string fileName_);
+        void writeParticleFields(std::string fileName_);
+
+        void deleteParticles();
+
+        void setParPos(std::vector<double> parPos) const {parPos_=parPos;};
+
+        std::string name() {return groupName_;};
+
+        bool runProbes(std::string filterName);
+
+        void addVector();
+        void addScalar();
+
+        void cleanProbeFields();
+
+    };
 }
 
 

@@ -1,11 +1,11 @@
 /*-----------------------------------------------------------------------------*\
-                  ___   _____   _____   _____     ___   
-                 / ___\/\  __`\/\  __`\/\  __`\  / __`\ 
+                  ___   _____   _____   _____     ___
+                 / ___\/\  __`\/\  __`\/\  __`\  / __`\
                 /\ \__/\ \ \_\ \ \ \_\ \ \ \_\ \/\ \_\ \
                 \ \____\\ \  __/\ \  __/\ \  __/\ \____/
-                 \/____/ \ \ \/  \ \ \/  \ \ \/  \/___/ 
-                          \ \_\   \ \_\   \ \_\         
-                           \/_/    \/_/    \/_/         
+                 \/____/ \ \ \/  \ \ \/  \ \ \/  \/___/
+                          \ \_\   \ \_\   \ \_\
+                           \/_/    \/_/    \/_/
 
          A Compilation for Fluid-Particle Data Post PrOcessing
 
@@ -40,43 +40,46 @@ License
 
 namespace C3PO_NS
 {
- class FilteringKernel : public OperationFiltering
- {
-  public:
-  
-  FilteringKernel(c3po *ptr,const char *_name);
-  ~FilteringKernel();
+    class FilteringKernel : public OperationFiltering
+    {
+    public:
 
-  protected:
-  
-  //Names of the weight fields
-  mutable std::vector<std::string>    weightSFName_;
-  
-  //number of weight fields
-  mutable int                         weight_fields;
-  
-  //Names of the inverted weight fields
-  mutable std::vector<std::string>    inv_weightSFName_;
-    
-  //number of inverted weight fields
-  mutable int                         inv_weight_fields;
-  
-  //List of Ids for weight fields
-  mutable std::vector<int>                   weights_id;
-     
-  
-  //Check json file for Kernel Settings
-  void process_input(QJsonObject jsonObj);
-  
-  //Virtual function for Kernel implementation
-  virtual inline double kernelFunction( double* pos1, double* pos2) {return 1.0;};
-  
-  //calculate weights
-  inline double calculateWeights( int Id);
-  
-  //Check if weights are registerd
-  void check_additional_fields();
-   
- };
+        FilteringKernel(c3po *ptr,const char *_name);
+        ~FilteringKernel();
+
+    protected:
+
+        //Names of the weight fields
+        mutable std::vector<std::string>    weightSFName_;
+
+        //number of weight fields
+        mutable int                         weight_fields;
+
+        //Names of the inverted weight fields
+        mutable std::vector<std::string>    inv_weightSFName_;
+
+        //number of inverted weight fields
+        mutable int                         inv_weight_fields;
+
+        //List of Ids for weight fields
+        mutable std::vector<int>                   weights_id;
+
+
+        //Check json file for Kernel Settings
+        void process_input(QJsonObject jsonObj);
+
+        //Virtual function for Kernel implementation
+        virtual inline double kernelFunction( double* pos1, double* pos2)
+        {
+            return 1.0;
+        };
+
+        //calculate weights
+        double calculateWeights( int Id);
+
+        //Check if weights are registerd
+        void check_additional_fields();
+
+    };
 }
 #endif

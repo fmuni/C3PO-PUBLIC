@@ -1,11 +1,11 @@
 /*-----------------------------------------------------------------------------*\
-                  ___   _____   _____   _____     ___   
-                 / ___\/\  __`\/\  __`\/\  __`\  / __`\ 
+                  ___   _____   _____   _____     ___
+                 / ___\/\  __`\/\  __`\/\  __`\  / __`\
                 /\ \__/\ \ \_\ \ \ \_\ \ \ \_\ \/\ \_\ \
                 \ \____\\ \  __/\ \  __/\ \  __/\ \____/
-                 \/____/ \ \ \/  \ \ \/  \ \ \/  \/___/ 
-                          \ \_\   \ \_\   \ \_\         
-                           \/_/    \/_/    \/_/         
+                 \/____/ \ \ \/  \ \ \/  \ \ \/  \/___/
+                          \ \_\   \ \_\   \ \_\
+                           \/_/    \/_/    \/_/
 
          A Compilation for Fluid-Particle Data Post PrOcessing
 
@@ -45,91 +45,116 @@ namespace C3PO_NS
 {
 
 
-class OperationSampling : public OperationBase
-{
+    class OperationSampling : public OperationBase
+    {
     public:
 
-      OperationSampling(c3po *ptr,const char *_name);
-      ~OperationSampling();
+        OperationSampling(c3po *ptr,const char *_name);
+        ~OperationSampling();
 
-      virtual void init(QJsonObject jsonObj);
-      virtual void process_input(QJsonObject jsonObj) {};
-      
-      void begin_of_step() {};
-      void middle_of_step() ;
-      void end_of_step() ;
-      
-      
-      void insertSample(double _sample,double _x1,unsigned int id_=0, int marker_=0);
-      void insertSample(double _sample,double* _x1,unsigned int id_=0);
-      
-      void setFile(std::string file)  {fileToWrite_.assign(file);};
+        virtual void init(QJsonObject jsonObj);
+        virtual void process_input(QJsonObject jsonObj) {};
 
-      void flushToBin();
-      void flushToFile();
+        void begin_of_step() {};
+        void middle_of_step() ;
+        void end_of_step() ;
 
-      int    sampleCount() {return sampleCount_;};     
-      double sampleDelta() {return sampleDelta_;}; 
-      
-      void clearSamples();
-      void createSampleVectors(unsigned int, unsigned int, unsigned int);
-      void sampleSetSkip(unsigned int id);
-      
-      void registerInputFields(std::string samplesVF, std::string samplesSF,  std::string markers) const;
-      
-     // void calculateFormula() {};
-      
-      
-      
-      
 
+        void insertSample
+        (
+            double _sample,
+            double _x1,
+            unsigned int id_=0,
+            int marker_=0
+        );
+
+        void insertSample
+        (
+            double _sample,
+            double* _x1,
+            unsigned int id_=0
+        );
+
+        void setFile(std::string file)  {fileToWrite_.assign(file);};
+
+        void flushToBin();
+        void flushToFile();
+
+        int    sampleCount() {return sampleCount_;};
+        double sampleDelta() {return sampleDelta_;};
+
+        void clearSamples();
+        void createSampleVectors(unsigned int, unsigned int, unsigned int);
+        void sampleSetSkip(unsigned int id);
+
+        void registerInputFields
+        (
+            std::string samplesVF,
+            std::string samplesSF,
+            std::string markers
+        ) const;
+
+        // void calculateFormula() {};
+        
     protected:
 
-      std::vector< std::vector<double> >   samples_;       //main storage for scalar-valued samples
-      std::vector< std::vector<double>* >  samplesX1_;     //main storage for marker (x1...marker to identify bin)
-      std::vector< std::string >           samplesNames_;  //names to indicate vector or scalar
-      std::vector< bool >                  samplesSkip_;   //bool to indicate skipping of sampling (e.g., to suppress output)
-      long double                          flushID_;       //id to mark samples
+        //main storage for scalar-valued samples
+        std::vector< std::vector<double> >   samples_;
 
-      mutable int                          sampleCount_;   //count of samples to be drawn (PER CELL or PER PARTICLE!)
-      mutable double                       sampleDelta_;   //delta between samples
+        //main storage for marker (x1...marker to identify bin)
+        std::vector< std::vector<double>* >  samplesX1_;
 
-      mutable bool                         save2Bin_; 
-      mutable bool                         save2Disk_;
-      
-      mutable std::string                  fieldName_;
-      
-      mutable std::vector<std::string>     VFtoSample_;
-      mutable std::vector<std::string>     SFtoSample_;
+        //names to indicate vector or scalar
+        std::vector< std::string >           samplesNames_;
 
-      mutable std::vector<std::string>     markers_;
-      
-  
-      std::string                          fileToWrite_;
-      const char*                          Name_;
-      mutable bool                         lagrangian_;
-      
-      int                                  binOp_;
-      bool                                 overwrite_; 
-      bool                                 execFormula_;
-      
-      Formula *                            formula_;
-      mutable int                          NofMarkers_;
-      
-      std::string                          probesName_;
+         //bool to indicate skipping of sampling (e.g., to suppress output)
+        std::vector< bool >                  samplesSkip_;
 
-      bool                                 normalizeSample_;
-      
-      int                                  component_;
-      
-      bool                                 selective_;
-      
-      double                               minimum_[3];
-      
-      double                               maximum_[3];
-            
+        //id to mark samples
+        long double                          flushID_;
 
-};
+        //count of samples to be drawn (PER CELL or PER PARTICLE!)
+        mutable int                          sampleCount_;
+
+        //delta between samples
+        mutable double                       sampleDelta_;
+
+        mutable bool                         save2Bin_;
+        mutable bool                         save2Disk_;
+
+        mutable std::string                  fieldName_;
+
+        mutable std::vector<std::string>     VFtoSample_;
+        mutable std::vector<std::string>     SFtoSample_;
+
+        mutable std::vector<std::string>     markers_;
+
+
+        std::string                          fileToWrite_;
+        const char*                          Name_;
+        mutable bool                         lagrangian_;
+
+        int                                  binOp_;
+        bool                                 overwrite_;
+        bool                                 execFormula_;
+
+        Formula *                            formula_;
+        mutable int                          NofMarkers_;
+
+        std::string                          probesName_;
+
+        bool                                 normalizeSample_;
+
+        int                                  component_;
+
+        bool                                 selective_;
+
+        double                               minimum_[3];
+
+        double                               maximum_[3];
+
+
+    };
 
 } //end c3po_NS
 

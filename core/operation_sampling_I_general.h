@@ -1,11 +1,11 @@
 /*-----------------------------------------------------------------------------*\
-                  ___   _____   _____   _____     ___   
-                 / ___\/\  __`\/\  __`\/\  __`\  / __`\ 
+                  ___   _____   _____   _____     ___
+                 / ___\/\  __`\/\  __`\/\  __`\  / __`\
                 /\ \__/\ \ \_\ \ \ \_\ \ \ \_\ \/\ \_\ \
                 \ \____\\ \  __/\ \  __/\ \  __/\ \____/
-                 \/____/ \ \ \/  \ \ \/  \ \ \/  \/___/ 
-                          \ \_\   \ \_\   \ \_\         
-                           \/_/    \/_/    \/_/         
+                 \/____/ \ \ \/  \ \ \/  \ \ \/  \/___/
+                          \ \_\   \ \_\   \ \_\
+                           \/_/    \/_/    \/_/
 
          A Compilation for Fluid-Particle Data Post PrOcessing
 
@@ -48,29 +48,25 @@ OperationStyle(samplingGeneral,SamplingGeneral)
 
 namespace C3PO_NS
 {
- class SamplingGeneral : public OperationSampling
- {
-  public:
-  
-  virtual void process_input(QJsonObject jsonObj);
- 
-  void begin_of_step();
-  
-  SamplingGeneral(c3po *ptr,const char *name);
-  ~SamplingGeneral();
-    
-  private:
-  
+    class SamplingGeneral : public OperationSampling
+    {
+    public:
 
+        virtual void process_input(QJsonObject jsonObj);
 
-  void sampleGeneralEulerian();
-  void sampleGeneralLagrangian();
-  
-  void (SamplingGeneral::*run)();
-  
- 
-  
- };
+        void begin_of_step();
+
+        SamplingGeneral(c3po *ptr,const char *name);
+        ~SamplingGeneral();
+
+    private:
+
+        void sampleGeneralEulerian();
+        void sampleGeneralLagrangian();
+
+        void (SamplingGeneral::*run)();
+
+    };
 
 }
 

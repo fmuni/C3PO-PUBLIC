@@ -1,11 +1,11 @@
 /*-----------------------------------------------------------------------------*\
-                  ___   _____   _____   _____     ___   
-                 / ___\/\  __`\/\  __`\/\  __`\  / __`\ 
+                  ___   _____   _____   _____     ___
+                 / ___\/\  __`\/\  __`\/\  __`\  / __`\
                 /\ \__/\ \ \_\ \ \ \_\ \ \ \_\ \/\ \_\ \
                 \ \____\\ \  __/\ \  __/\ \  __/\ \____/
-                 \/____/ \ \ \/  \ \ \/  \ \ \/  \/___/ 
-                          \ \_\   \ \_\   \ \_\         
-                           \/_/    \/_/    \/_/         
+                 \/____/ \ \ \/  \ \ \/  \ \ \/  \/___/
+                          \ \_\   \ \_\   \ \_\
+                           \/_/    \/_/    \/_/
 
          A Compilation for Fluid-Particle Data Post PrOcessing
 
@@ -47,53 +47,83 @@ namespace C3PO_NS
 
 
 
-class Output : public c3poBase, public c3poBaseInterface
-{
+    class Output : public c3poBase, public c3poBaseInterface
+    {
     public:
 
-      Output(c3po *ptr);
-      ~Output();
+        Output(c3po *ptr);
+        ~Output();
 
-      void write_screen_one(const char *message) const;
-      void write_screen_all(const char *message) const;
-      void write_screen_one_int(const int number, const char *message) const;
-      void write_screen_one_int2(const int number, const char *message,const char *message2) const;
-      void write_screen_all_int(const int number, const char *message) const;
-       
-      void write_log_one(const char *message) const;
-      void write_log_all(const char *message) const;
-      void write_time_one(double *message);
-     
-      static void createQJsonArrays(std::string,std::string,
-                                    std::vector<std::string>, std::vector<double*>, 
-                                    int datanum = -1, bool overwrite=true, 
-                                    std::vector<int> * datanumvec_ = NULL
-                                   );
-                                   
-      static void createQJsonArrays(std::string,std::string,
-                                    std::vector<std::string>, std::vector<int*>, 
-                                    int datanum = -1, bool overwrite=true, 
-                                    std::vector<int> * datanumvec_ = NULL
-                                   );
+        void write_screen_one(const char *message) const;
+        void write_screen_all(const char *message) const;
+        void write_screen_one_int
+        (
+            const int number,
+            const char *message
+        ) const;
+
+        void write_screen_one_int2
+        (
+            const int number,
+            const char *message,
+            const char *message2
+        ) const;
+
+        void write_screen_all_int
+        (
+            const int number,
+            const char *message
+        ) const;
+
+        void write_log_one(const char *message) const;
+        void write_log_all(const char *message) const;
+        void write_time_one(double *message);
+
+        static void createQJsonArrays
+        (
+            std::string,std::string,
+            std::vector<std::string>,
+            std::vector<double*>,
+            int datanum = -1,
+            bool overwrite=true,
+            std::vector<int> * datanumvec_ = NULL
+        );
+
+        static void createQJsonArrays
+        (
+            std::string,std::string,
+            std::vector<std::string>,
+            std::vector<int*>,
+            int datanum = -1,
+            bool overwrite=true,
+            std::vector<int> * datanumvec_ = NULL
+        );
 
 
-      static void createQJsonArrays(std::string,std::string,
-                                    std::vector<std::string>,std::vector<double**>,
-                                    int,int,int,bool
-                                   );
- 
-      void generateDir(std::string dir, bool &check) const;
+        static void createQJsonArrays
+        (
+            std::string,
+            std::string,
+            std::vector<std::string>,
+            std::vector<double**>,
+            int,
+            int,
+            int,
+            bool
+        );
 
-      //void write_screen_log_one(const char *message);
-      //void write_screen_log_all(const char *message);
+        void generateDir(std::string dir, bool &check) const;
+
+        //void write_screen_log_one(const char *message);
+        //void write_screen_log_all(const char *message);
 
     private:
 
-      FILE *screen_;                  // screen output
-      FILE *logfile_;                 // logfile
-      char *version_;                      // basic identifier of code version
+        FILE *screen_;                  // screen output
+        FILE *logfile_;                 // logfile
+        char *version_;                      // basic identifier of code version
 
-};
+    };
 
 } //end c3po_NS
 

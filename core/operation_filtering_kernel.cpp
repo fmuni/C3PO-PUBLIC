@@ -1,11 +1,11 @@
 /*-----------------------------------------------------------------------------*\
-                  ___   _____   _____   _____     ___   
-                 / ___\/\  __`\/\  __`\/\  __`\  / __`\ 
+                  ___   _____   _____   _____     ___
+                 / ___\/\  __`\/\  __`\/\  __`\  / __`\
                 /\ \__/\ \ \_\ \ \ \_\ \ \ \_\ \/\ \_\ \
                 \ \____\\ \  __/\ \  __/\ \  __/\ \____/
-                 \/____/ \ \ \/  \ \ \/  \ \ \/  \/___/ 
-                          \ \_\   \ \_\   \ \_\         
-                           \/_/    \/_/    \/_/         
+                 \/____/ \ \ \/  \ \ \/  \ \ \/  \/___/
+                          \ \_\   \ \_\   \ \_\
+                           \/_/    \/_/    \/_/
 
          A Compilation for Fluid-Particle Data Post PrOcessing
 
@@ -41,11 +41,11 @@ License
 using namespace C3PO_NS;
 
 /* ----------------------------------------------------------------------
-   ModelBase Constructor
+ModelBase Constructor
 ------------------------------------------------------------------------- */
 
-FilteringKernel::FilteringKernel(c3po *ptr,const char *name) 
-: 
+FilteringKernel::FilteringKernel(c3po *ptr,const char *name)
+:
 OperationFiltering(ptr,name),
 weight_fields(0),
 inv_weight_fields(0)
@@ -54,153 +54,205 @@ inv_weight_fields(0)
 
 FilteringKernel::~FilteringKernel()
 {
- 
+
 }
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 void FilteringKernel::process_input(QJsonObject jsonObj)
 {
- 
- //Check if "kernelSettings" exists
- if(jsonObj["kernelSettings"].isNull())
-   error().throw_error_one(FLERR,"You must specify the 'kernelSettings' field for every filtering operation! \n");
-   
- //Get kernelSettings object
- QJsonObject kernelSet_ = jsonObj["kernelSettings"].toObject();
- 
- 
- //Check and register weight fields
- if(!kernelSet_["weightFields"].isNull())
- {
-  if(input().verbose())
-   output().write_screen_one("\nPerforming weighted average\n");
 
-  
-  QString qsS=kernelSet_["weightFields"].toString();
-  std::string bigS=qsS.toUtf8().constData();
-   
-  for (unsigned int it=0; it<bigS.size();it++)
-  {
-        
-        if (bigS[it] != ' ' )
-        {  
-          
-          std::string name;
-         
-          while (bigS[it] != ' ')
-            {
-               name.push_back(bigS[it]);
-               it++;  
-               if (it==bigS.size()) break;           
-              
-            }  
-        //  if(name.empty()==false)  
-        // { 
-          int index = input().getSFnumber(name);
-          if (index==-1) error().throw_error_all("operation_filtering.cpp",0, "Weight fields should be registered as scalar fields in C3PO first");
-          
-          weightSFName_.push_back(name);
-          
-         //} 
+    //Check if "kernelSettings" exists
+    if(jsonObj["kernelSettings"].isNull())
+    {
+        error().throw_error_one
+        (
+            FLERR,
+            "You must specify the 'kernelSettings' field for every"
+            " filtering operation! \n"
+        );
+    }
+
+    //Get kernelSettings object
+    QJsonObject kernelSet_ = jsonObj["kernelSettings"].toObject();
+
+
+    //Check and register weight fields
+    if(!kernelSet_["weightFields"].isNull())
+    {
+        if(input().verbose())
+        {
+            output().write_screen_one("\nPerforming weighted average\n");
         }
-  }
-  
-  weight_fields = weightSFName_.size();
-  
- }
- 
- //Check and register inverted weight fields
- if(!kernelSet_["invertedWeightFields"].isNull())
- {
-  if(input().verbose())
-   output().write_screen_one("\nPerforming weighted average with inverse\n");
 
-  
-  QString qsS=kernelSet_["invertedWeightFields"].toString();
-  std::string bigS=qsS.toUtf8().constData();
-   
-  for (unsigned int it=0; it<bigS.size();it++)
-  {
-        
-        if (bigS[it] != ' ' )
-        {  
-          
-          std::string name;
-         
-          while (bigS[it] != ' ')
+        QString qsS=kernelSet_["weightFields"].toString();
+        std::string bigS=qsS.toUtf8().constData();
+
+        for (unsigned int it=0; it<bigS.size();it++)
+        {
+
+            if (bigS[it] != ' ' )
             {
-               name.push_back(bigS[it]);
-               it++;  
-               if (it==bigS.size()) break;           
-              
-            }  
-        //  if(name.empty()==false)  
-        // { 
-          int index = input().getSFnumber(name);
-          if (index==-1) error().throw_error_all("operation_filtering.cpp",0, "Weight fields should be registered as scalar fields in C3PO first");
-          { 
-           inv_weightSFName_.push_back(name);
-          }
-         //} 
-        }
-  }
-  
-  inv_weight_fields = filterSFName_.size();
 
- 
- }
-  
+                std::string name;
+
+                while (bigS[it] != ' ')
+                {
+                    name.push_back(bigS[it]);
+                    it++;
+                    if (it==bigS.size()) break;
+
+                }
+                //  if(name.empty()==false)
+                // {
+                int index = input().getSFnumber(name);
+                if (index==-1)
+                {
+                    error().throw_error_all
+                    (
+                        "operation_filtering.cpp",
+                        0,
+                        "Weight fields should be registered as scalar fields"
+                        " in C3PO first"
+                    );
+                }
+
+                weightSFName_.push_back(name);
+
+                //}
+            }
+        }
+
+        weight_fields = weightSFName_.size();
+
+    }
+
+    //Check and register inverted weight fields
+    if(!kernelSet_["invertedWeightFields"].isNull())
+    {
+        if(input().verbose())
+        {
+            output().write_screen_one
+            (
+                "\nPerforming weighted average with inverse\n"
+            );
+        }
+
+
+        QString qsS=kernelSet_["invertedWeightFields"].toString();
+        std::string bigS=qsS.toUtf8().constData();
+
+        for (unsigned int it=0; it<bigS.size();it++)
+        {
+
+            if (bigS[it] != ' ' )
+            {
+
+                std::string name;
+
+                while (bigS[it] != ' ')
+                {
+                    name.push_back(bigS[it]);
+                    it++;
+                    if (it==bigS.size()) break;
+
+                }
+                //  if(name.empty()==false)
+                // {
+                int index = input().getSFnumber(name);
+                if (index==-1)
+                {
+                    error().throw_error_all
+                    (
+                        "operation_filtering.cpp",
+                        0,
+                        "Weight fields should be registered as scalar fields"
+                        " in C3PO first"
+                    );
+                }
+
+                inv_weightSFName_.push_back(name);
+
+                //}
+            }
+        }
+
+        inv_weight_fields = filterSFName_.size();
+
+    }
+
 }
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* * * * * * * * * * * * * * * * * * * * ** * * * * * * * * * * * * * * * * * */
 void FilteringKernel::check_additional_fields()
 {
 
-  weights_id.clear();
-  
-  for(int i=0;i<weight_fields;i++)
-  {
-    weights_id.push_back(dataStorage().fSFid(weightSFName_[i]));
-    if (weights_id[i]==-1)
-        error().throw_error_all("OperationFiltering::begin_of_step()",0,"ERROR: The weight scalar field is NOT registered!");
-  }
-  
-  for(int i=0;i<inv_weight_fields;i++)
-  {
-    weights_id.push_back(dataStorage().fSFid(inv_weightSFName_[i]));
-    if (weights_id[weight_fields+i]==-1)
-        error().throw_error_all("OperationFiltering::begin_of_step()",0,"ERROR: The weight scalar field is NOT registered!");
-  }
-  
-  //Create array to hold partial weigths
-  //This array is rather expensive in terms of memory
-  //But it is necessary for every calculation
-  //C3PO_MEMORY_NS::destroy(filterWeights_);
-  
-  if(!par_)
-  {
-   filterWeights_= C3PO_MEMORY_NS::create(filterWeights_, mesh().NofCells());
-   setVectorToZero(filterWeights_,mesh().NofCells());
-  }
+    weights_id.clear();
+
+    for(int i=0;i<weight_fields;i++)
+    {
+        weights_id.push_back(dataStorage().fSFid(weightSFName_[i]));
+        if (weights_id[i]==-1)
+        {
+            error().throw_error_all
+            (
+                "OperationFiltering::begin_of_step()",
+                0,
+                "ERROR: The weight scalar field is NOT registered!"
+            );
+        }
+    }
+
+    for(int i=0;i<inv_weight_fields;i++)
+    {
+        weights_id.push_back(dataStorage().fSFid(inv_weightSFName_[i]));
+        if (weights_id[weight_fields+i]==-1)
+        {
+            error().throw_error_all
+            (
+                "OperationFiltering::begin_of_step()",
+                0,
+                "ERROR: The weight scalar field is NOT registered!"
+            );
+        }
+    }
+
+    //Create array to hold partial weigths
+    //This array is rather expensive in terms of memory
+    //But it is necessary for every calculation
+    //C3PO_MEMORY_NS::destroy(filterWeights_);
+
+    if(!par_)
+    {
+        filterWeights_= C3PO_MEMORY_NS::create
+        (
+            filterWeights_,
+            mesh().NofCells()
+        );
+
+        setVectorToZero(filterWeights_,mesh().NofCells());
+    }
 
 
 }
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-inline double FilteringKernel:: calculateWeights( int Id)
+/* * * * * * * * * * * * * * * * * *  * * * * * * * * * * * * * * * * * * * * */
+double FilteringKernel:: calculateWeights( int Id)
 {
 
- //initial weight is the cell volume
- double wi =  *(mesh().CellVol(Id));
- 
- //multiply by weights 
- for(int i=0;i<weight_fields;i++)
-  wi = wi * dataStorage().SF(weights_id[i],Id);
+    //initial weight is the cell volume
+    double wi =  *(mesh().CellVol(Id));
 
- //multiply by inverse weights
- for(int i=0;i<inv_weight_fields;i++)
-  wi = wi * ( 1.0 - dataStorage().SF(weights_id[weight_fields+i],Id));
+    //multiply by weights
+    for(int i=0;i<weight_fields;i++)
+    {
+        wi = wi * dataStorage().SF(weights_id[i],Id);
+    }
 
- //Return weight
- return wi; 
+    //multiply by inverse weights
+    for(int i=0;i<inv_weight_fields;i++)
+    {
+        wi = wi * ( 1.0 - dataStorage().SF(weights_id[weight_fields+i],Id));
+    }
+
+    //Return weight
+    return wi;
 }
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
