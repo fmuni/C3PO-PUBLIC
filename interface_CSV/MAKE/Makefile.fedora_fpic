@@ -60,7 +60,7 @@ FFT_LIB =
 THIRDPARTY_INC =  -I$(C3PO_SRC_DIR)/include -I$(C3PO_QT5_INC) -I$(C3PO_HDF5_INC) -I$(C3PO_SRC_DIR)/core
 THIRDPARTY_PATH =  
 THIRDPARTY_LIB =   -L$(C3PO_INST_DIR)/lib64  -L$(C3PO_INST_DIR)/lib -L$(C3PO_SRC_DIR)/core -lc3po  -L$(C3PO_QT5_LIB) \
-                    -lQt5Core  -L$(C3PO_HDF5_LIB) -lhdf5_cpp  -lhdf5 
+                    -lQt5Core  -L$(C3PO_HDF5_LIB) -lhdf5_cpp  -lhdf5_serial  
 
 # ---------------------------------------------------------------------
 # build rules and dependencies
