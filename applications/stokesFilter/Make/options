@@ -10,6 +10,7 @@ EXE_INC = \
     -I$(C3PO_SRC_DIR)/core \
     -I$(MPI_ARCH_PATH)/include \
      -I$(CFDEM_OFVERSION_DIR) \
+     -Wno-old-style-cast \
 
 EXE_LIBS = \
      $(PLIBS) \
